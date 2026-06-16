@@ -69,6 +69,10 @@
 }
 
 @layer utilities {
+  .site-header {
+    background: oklch(from var(--background) l c h / 84%);
+  }
+
   .editorial-title {
     font-family: var(--font-display);
     font-weight: 400;
