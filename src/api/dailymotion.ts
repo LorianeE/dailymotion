@@ -5,7 +5,11 @@ import type {
   DailymotionVideo,
 } from "./dailymotion.types";
 
+// TODO: Ne devrait-on pas avoir plutôt un dossier "dailymotion" et dedans un fichier par méthode appelée ?
+
+
 const API_BASE_URL = "https://api.dailymotion.com";
+// TODO: VIDEO_FIELDS a-t-on besoin de tout ça du coup ?
 const VIDEO_FIELDS = [
   "id",
   "title",
@@ -16,6 +20,19 @@ const VIDEO_FIELDS = [
   "duration",
   "views_total",
   "embed_url",
+].join(",");
+const VIDEO_DETAILS_FIELDS = [
+  "id",
+  "title",
+  "description",
+  "duration",
+  "views_total",
+  "likes_total",
+  "created_time",
+  "thumbnail_720_url",
+  "tags",
+  "owner.screenname",
+  "owner.avatar_120_url",
 ].join(",");
 
 export async function searchVideos(
@@ -48,16 +65,24 @@ export async function searchVideos(
 }
 
 export async function getVideoDetails(videoId: string): Promise<VideoDetails> {
-  const params = new URLSearchParams({ fields: VIDEO_FIELDS });
+  const params = new URLSearchParams({ fields: VIDEO_DETAILS_FIELDS });
   const response = await fetch(
     `${API_BASE_URL}/video/${encodeURIComponent(videoId)}?${params}`,
   );
 
-  if (!response.ok) {
+  if (response.status === 404) {
     throw new Error("Video not found.");
   }
 
+  if (!response.ok) {
+    throw new Error("Could not load video details.");
+  }
+
   const video = (await response.json()) as DailymotionVideo;
+
+  if (!video.id) {
+    throw new Error("Video not found.");
+  }
 
   return mapVideo(video);
 }

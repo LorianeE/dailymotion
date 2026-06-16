@@ -25,6 +25,18 @@ export function formatViews(views?: number): string | undefined {
   }).format(views)} views`;
 }
 
+export function formatDate(unixTimestamp?: number): string | undefined {
+  if (unixTimestamp === undefined) {
+    return undefined;
+  }
+
+  return new Intl.DateTimeFormat(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(new Date(unixTimestamp * 1000));
+}
+
 function padTime(value: number): string {
   return value.toString().padStart(2, "0");
 }

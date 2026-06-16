@@ -9,8 +9,13 @@ export type VideoSummary = {
 };
 
 export type VideoDetails = VideoSummary & {
-  description: string;
-  embedUrl: string;
+  description?: string;
+  likes?: number;
+  createdTime?: number;
+  thumbnail720Url?: string;
+  tags?: string[];
+  ownerAvatarUrl?: string;
+  embedUrl?: string;
 };
 
 export type VideoSearchResponse = {
