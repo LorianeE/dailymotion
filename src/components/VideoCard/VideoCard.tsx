@@ -1,16 +1,47 @@
+import { Link } from "react-router-dom";
+
 import type { VideoSummary } from "../../types/video";
 
 type VideoCardProps = {
-  video?: VideoSummary;
+  video: VideoSummary;
 };
 
 export function VideoCard({ video }: VideoCardProps) {
   return (
-    <article className="rounded-2xl border border-dashed border-border bg-card/75 p-4 text-sm text-muted-foreground">
-      VideoCard placeholder
-      <div className="mt-2 text-xs text-muted-foreground/75">
-        {video ? video.title : "No video bound yet"}
-      </div>
+    <article className="group overflow-hidden rounded-sm border border-border bg-card/70 transition-colors hover:border-primary/45 hover:bg-card">
+      <Link
+        className="block focus-visible:outline-none"
+        to={`/videos/${video.id}`}
+      >
+        <div className="relative aspect-video overflow-hidden bg-muted">
+          <img
+            alt=""
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            loading="lazy"
+            src={video.thumbnailUrl}
+          />
+          {video.duration ? (
+            <span className="absolute bottom-2 right-2 rounded bg-background/85 px-2 py-1 text-[11px] font-semibold text-foreground backdrop-blur">
+              {video.duration}
+            </span>
+          ) : null}
+        </div>
+
+        <div className="space-y-2 p-3">
+          <div className="flex items-center justify-between gap-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            <span className="truncate">{video.category ?? "Video"}</span>
+            {video.views ? (
+              <span className="shrink-0">{video.views}</span>
+            ) : null}
+          </div>
+          <h3 className="line-clamp-2 min-h-11 text-sm font-semibold leading-5 text-foreground">
+            {video.title}
+          </h3>
+          <p className="truncate text-xs text-muted-foreground">
+            {video.ownerScreenname}
+          </p>
+        </div>
+      </Link>
     </article>
   );
 }
