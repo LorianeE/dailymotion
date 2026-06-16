@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { ArrowRight, Search } from "lucide-react";
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -23,7 +24,7 @@ export function SearchBar({ query, onSearch }: SearchBarProps) {
       onSubmit={handleSubmit}
       role="search"
     >
-      <SearchIcon className="h-5 w-5 shrink-0 text-muted-foreground" />
+      <Search className="h-5 w-5 shrink-0 text-muted-foreground" />
       <Input
         className="h-12 flex-1 px-1"
         onChange={(event) => setValue(event.target.value)}
@@ -36,44 +37,8 @@ export function SearchBar({ query, onSearch }: SearchBarProps) {
         type="submit"
       >
         <span>Search</span>
-        <ArrowRightIcon className="h-4 w-4" />
+        <ArrowRight className="h-4 w-4" />
       </Button>
     </form>
-  );
-}
-
-function SearchIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.35-4.35" />
-    </svg>
-  );
-}
-
-function ArrowRightIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
-      <path d="M5 12h14" />
-      <path d="m12 5 7 7-7 7" />
-    </svg>
   );
 }
