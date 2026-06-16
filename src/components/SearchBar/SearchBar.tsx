@@ -8,9 +8,9 @@ export function SearchBar({
   onSearch,
 }: SearchBarProps) {
   return (
-    <div className="rounded-2xl border border-dashed border-slate-700 p-4 text-sm text-slate-400">
+    <div className="glass-surface rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">
       SearchBar placeholder
-      <div className="mt-2 text-xs text-slate-500">
+      <div className="mt-2 text-xs text-muted-foreground/75">
         initialValue: {initialValue || "empty"}
         {onSearch ? " / handler ready" : " / no handler yet"}
       </div>

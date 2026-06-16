@@ -6,9 +6,9 @@ type VideoCardProps = {
 
 export function VideoCard({ video }: VideoCardProps) {
   return (
-    <article className="rounded-2xl border border-dashed border-slate-700 p-4 text-sm text-slate-400">
+    <article className="rounded-2xl border border-dashed border-border bg-card/75 p-4 text-sm text-muted-foreground">
       VideoCard placeholder
-      <div className="mt-2 text-xs text-slate-500">
+      <div className="mt-2 text-xs text-muted-foreground/75">
         {video ? video.title : "No video bound yet"}
       </div>
     </article>
