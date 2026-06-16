@@ -1,0 +1,98 @@
+import type { VideoDetails } from "../../types/video";
+
+export const videoCatalog: VideoDetails[] = [
+  {
+    id: "x8s4k2a",
+    title: "Morning glass at Nazaré",
+    thumbnailUrl: "https://www.dailymotion.com/thumbnail/video/x8s4k2a",
+    ownerScreenname: "Ocean Notes",
+    category: "Surfing",
+    duration: "8:24",
+    views: "1.2M",
+    description: "Clean lines, cold water, and a patient camera on the cliff.",
+    embedUrl: "https://www.dailymotion.com/embed/video/x8s4k2a",
+  },
+  {
+    id: "x8q1p5m",
+    title: "Late-night lo-fi set from Seoul",
+    thumbnailUrl: "https://www.dailymotion.com/thumbnail/video/x8q1p5m",
+    ownerScreenname: "Tape Room",
+    category: "Lo-fi",
+    duration: "42:10",
+    views: "842K",
+    description: "A warm instrumental set built for small hours and low light.",
+    embedUrl: "https://www.dailymotion.com/embed/video/x8q1p5m",
+  },
+  {
+    id: "x8m2r9c",
+    title: "Inside a concrete house in Kyoto",
+    thumbnailUrl: "https://www.dailymotion.com/thumbnail/video/x8m2r9c",
+    ownerScreenname: "Open Plan",
+    category: "Architecture",
+    duration: "13:06",
+    views: "496K",
+    description:
+      "Quiet rooms, measured light, and an architect explaining restraint.",
+    embedUrl: "https://www.dailymotion.com/embed/video/x8m2r9c",
+  },
+  {
+    id: "x8v7h3q",
+    title: "Formula 1: the art of the undercut",
+    thumbnailUrl: "https://www.dailymotion.com/thumbnail/video/x8v7h3q",
+    ownerScreenname: "Apex Lab",
+    category: "Formula 1",
+    duration: "10:32",
+    views: "2.4M",
+    description:
+      "Strategy boards, tire windows, and the split-second calls that move races.",
+    embedUrl: "https://www.dailymotion.com/embed/video/x8v7h3q",
+  },
+  {
+    id: "x8n6b1t",
+    title: "Twenty-minute weeknight ramen",
+    thumbnailUrl: "https://www.dailymotion.com/thumbnail/video/x8n6b1t",
+    ownerScreenname: "Small Kitchen",
+    category: "Cooking",
+    duration: "6:51",
+    views: "719K",
+    description:
+      "Fast broth, crisp vegetables, and a soft egg without the ceremony.",
+    embedUrl: "https://www.dailymotion.com/embed/video/x8n6b1t",
+  },
+  {
+    id: "x8p9w4j",
+    title: "The sound of Jupiter's magnetosphere",
+    thumbnailUrl: "https://www.dailymotion.com/thumbnail/video/x8p9w4j",
+    ownerScreenname: "Deep Field",
+    category: "Space",
+    duration: "11:48",
+    views: "1.8M",
+    description:
+      "Mission data translated into audio and explained frame by frame.",
+    embedUrl: "https://www.dailymotion.com/embed/video/x8p9w4j",
+  },
+  {
+    id: "x8r5z8u",
+    title: "Street food market before sunrise",
+    thumbnailUrl: "https://www.dailymotion.com/thumbnail/video/x8r5z8u",
+    ownerScreenname: "Night Market",
+    category: "Cooking",
+    duration: "15:18",
+    views: "633K",
+    description:
+      "Steam, prep work, and early customers at a compact city market.",
+    embedUrl: "https://www.dailymotion.com/embed/video/x8r5z8u",
+  },
+  {
+    id: "x8t3c7d",
+    title: "A small apartment redesigned around light",
+    thumbnailUrl: "https://www.dailymotion.com/thumbnail/video/x8t3c7d",
+    ownerScreenname: "Measured Space",
+    category: "Architecture",
+    duration: "9:45",
+    views: "384K",
+    description:
+      "Built-ins, reflective surfaces, and a floor plan that earns every meter.",
+    embedUrl: "https://www.dailymotion.com/embed/video/x8t3c7d",
+  },
+];

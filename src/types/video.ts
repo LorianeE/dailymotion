@@ -3,6 +3,9 @@ export type VideoSummary = {
   title: string;
   thumbnailUrl: string;
   ownerScreenname: string;
+  category?: string;
+  duration?: string;
+  views?: string;
 };
 
 export type VideoDetails = VideoSummary & {
