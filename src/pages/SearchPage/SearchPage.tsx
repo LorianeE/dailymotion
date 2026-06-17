@@ -34,6 +34,7 @@ export function SearchPage() {
             emptyDescription="Nothing in the local catalog matched that query. Try another mood, topic, or channel."
             error={error}
             isLoading={isLoading}
+            searchQuery={query}
             videos={videos}
           />
         </section>

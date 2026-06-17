@@ -5,9 +5,10 @@ import { formatDuration, formatViews } from "../../utils/videoFormat";
 
 type VideoCardProps = {
   video: VideoSummary;
+  searchQuery?: string;
 };
 
-export function VideoCard({ video }: VideoCardProps) {
+export function VideoCard({ video, searchQuery }: VideoCardProps) {
   const duration = formatDuration(video.duration);
   const views = formatViews(video.views);
 
@@ -15,6 +16,7 @@ export function VideoCard({ video }: VideoCardProps) {
     <article className="group overflow-hidden rounded-sm border border-border bg-card/70 transition-colors hover:border-primary/45 hover:bg-card">
       <Link
         className="block focus-visible:outline-none"
+        state={searchQuery ? { returnToSearch: { query: searchQuery } } : null}
         to={`/videos/${video.id}`}
       >
         <div className="relative aspect-video overflow-hidden bg-muted">

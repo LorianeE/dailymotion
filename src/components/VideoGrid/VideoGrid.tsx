@@ -9,6 +9,7 @@ type VideoGridProps = {
   error?: string | null;
   emptyTitle?: string;
   emptyDescription?: string;
+  searchQuery?: string;
 };
 
 export function VideoGrid({
@@ -17,6 +18,7 @@ export function VideoGrid({
   error = null,
   emptyTitle = "No videos found",
   emptyDescription = "Try a broader search or one of the suggestions above.",
+  searchQuery,
 }: VideoGridProps) {
   if (error) {
     return (
@@ -51,7 +53,7 @@ export function VideoGrid({
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {videos.map((video) => (
-        <VideoCard key={video.id} video={video} />
+        <VideoCard key={video.id} searchQuery={searchQuery} video={video} />
       ))}
     </div>
   );
