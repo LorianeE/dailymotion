@@ -27,7 +27,10 @@ describe("useVideoSearch", () => {
   });
 
   it("trims the search query and calls searchVideos with the normalized value", async () => {
-    const deferred = createDeferredPromise<{ list: VideoSummary[]; hasMore: boolean }>();
+    const deferred = createDeferredPromise<{
+      list: VideoSummary[];
+      hasMore: boolean;
+    }>();
     mockedSearchVideos.mockReturnValue(deferred.promise);
 
     const { result } = renderHook(() => useVideoSearch());
@@ -103,7 +106,9 @@ describe("useVideoSearch", () => {
     expect(result.current.isLoading).toBe(true);
 
     await waitFor(() => {
-      expect(result.current.error).toBe("Could not load videos. Try another search.");
+      expect(result.current.error).toBe(
+        "Could not load videos. Try another search.",
+      );
       expect(result.current.videos).toEqual([]);
       expect(result.current.isLoading).toBe(false);
     });

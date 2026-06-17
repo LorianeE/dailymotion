@@ -8,10 +8,7 @@ type LikeButtonProps = {
   onToggle?: () => void;
 };
 
-export function LikeButton({
-  isLiked = false,
-  onToggle,
-}: LikeButtonProps) {
+export function LikeButton({ isLiked = false, onToggle }: LikeButtonProps) {
   return (
     <Button
       aria-pressed={isLiked}

@@ -4,7 +4,7 @@
 :root {
   --background: oklch(0.16 0.015 290);
   --foreground: oklch(0.98 0.005 280);
-  --card: oklch(0.20 0.02 290);
+  --card: oklch(0.2 0.02 290);
   --muted: oklch(0.24 0.025 290);
   --muted-foreground: oklch(0.74 0.03 290);
   --primary: oklch(0.72 0.18 300);
@@ -39,7 +39,7 @@
   html {
     color-scheme: dark;
     background: var(--background);
-    font-family: var(--font-sans);
+    font-family: var(--font-sans), sans-serif;
   }
 
   body {
@@ -52,7 +52,11 @@
         oklch(from var(--accent) l c h / 40%),
         oklch(from var(--background) l c h / 0%) 32rem
       ),
-      linear-gradient(135deg, var(--background), color-mix(in oklch, var(--background) 86%, var(--accent)));
+      linear-gradient(
+        135deg,
+        var(--background),
+        color-mix(in oklch, var(--background) 86%, var(--accent))
+      );
     color: var(--foreground);
     text-rendering: optimizeLegibility;
   }
@@ -74,7 +78,7 @@
   }
 
   .editorial-title {
-    font-family: var(--font-display);
+    font-family: var(--font-display), serif;
     font-weight: 400;
     letter-spacing: 0;
   }
