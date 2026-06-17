@@ -1,47 +1,30 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { searchVideos } from "../../api/dailymotion";
 import type { VideoSummary } from "../../types/video";
+
+export type UseVideoSearchInput = {
+  query: string;
+};
 
 export type UseVideoSearchResult = {
   query: string;
   videos: VideoSummary[];
   isLoading: boolean;
   error: string | null;
-  search: (value: string) => void;
 };
 
-export function useVideoSearch(): UseVideoSearchResult {
-  const [query, setQuery] = useState("");
+export function useVideoSearch({
+  query: queryInput,
+}: UseVideoSearchInput): UseVideoSearchResult {
+  const query = queryInput.trim();
   const [videos, setVideos] = useState<VideoSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const latestSearchId = useRef(0);
 
-  async function runSearch(nextQuery: string, searchId: number) {
-    try {
-      const response = await searchVideos(nextQuery);
-      if (searchId === latestSearchId.current) {
-        setVideos(response.list);
-      }
-    } catch {
-      if (searchId === latestSearchId.current) {
-        setError("Could not load videos. Try another search.");
-        setVideos([]);
-      }
-    } finally {
-      if (searchId === latestSearchId.current) {
-        setIsLoading(false);
-      }
-    }
-  }
-
-  function search(value: string) {
-    const nextQuery = value.trim();
-
-    setQuery(nextQuery);
-
-    if (!nextQuery) {
+  useEffect(() => {
+    if (!query) {
       latestSearchId.current += 1;
       setVideos([]);
       setError(null);
@@ -49,18 +32,34 @@ export function useVideoSearch(): UseVideoSearchResult {
       return;
     }
 
-    setIsLoading(true);
-    setError(null);
     const searchId = latestSearchId.current + 1;
     latestSearchId.current = searchId;
-    void runSearch(nextQuery, searchId);
-  }
+    setIsLoading(true);
+    setError(null);
+
+    void searchVideos(query)
+      .then((response) => {
+        if (searchId === latestSearchId.current) {
+          setVideos(response.list);
+        }
+      })
+      .catch(() => {
+        if (searchId === latestSearchId.current) {
+          setError("Could not load videos. Try another search.");
+          setVideos([]);
+        }
+      })
+      .finally(() => {
+        if (searchId === latestSearchId.current) {
+          setIsLoading(false);
+        }
+      });
+  }, [query]);
 
   return {
     query,
     videos,
     isLoading,
     error,
-    search,
   };
 }

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { FormEvent } from "react";
 import { ArrowRight, Search } from "lucide-react";
 
@@ -6,13 +5,12 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
 type SearchBarProps = {
-  query: string;
+  value: string;
+  onValueChange: (value: string) => void;
   onSearch: (value: string) => void;
 };
 
-export function SearchBar({ query, onSearch }: SearchBarProps) {
-  const [value, setValue] = useState(query);
-
+export function SearchBar({ value, onValueChange, onSearch }: SearchBarProps) {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     onSearch(value);
@@ -27,7 +25,7 @@ export function SearchBar({ query, onSearch }: SearchBarProps) {
       <Search className="h-5 w-5 shrink-0 text-muted-foreground" />
       <Input
         className="h-12 flex-1 px-1"
-        onChange={(event) => setValue(event.target.value)}
+        onChange={(event) => onValueChange(event.target.value)}
         placeholder="Search for anything…"
         type="search"
         value={value}

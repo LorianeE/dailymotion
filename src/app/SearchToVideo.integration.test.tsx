@@ -1,11 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {
-  createMemoryRouter,
-  Outlet,
-  RouterProvider,
-  useLocation,
-} from "react-router-dom";
+import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
 
 import { getVideoDetails, searchVideos } from "../api/dailymotion";
 import { SearchPage } from "../pages/SearchPage/SearchPage";
@@ -24,23 +19,13 @@ function TestLayout() {
   return <Outlet />;
 }
 
-function LocationStateProbe() {
-  const location = useLocation();
-
-  return (
-    <output data-testid="location-state">
-      {JSON.stringify(location.state)}
-    </output>
-  );
-}
-
 describe("search to video integration", () => {
   afterEach(() => {
     vi.clearAllMocks();
     vi.restoreAllMocks();
   });
 
-  it("navigates from a mocked search result to the video page with return state", async () => {
+  it("keeps the video URL clean and returns to the search query", async () => {
     const user = userEvent.setup();
     const videoSummary: VideoSummary = {
       id: "xmocked",
@@ -74,12 +59,7 @@ describe("search to video integration", () => {
             },
             {
               path: "videos/:videoId",
-              element: (
-                <>
-                  <LocationStateProbe />
-                  <VideoPage />
-                </>
-              ),
+              element: <VideoPage />,
             },
           ],
         },
@@ -96,6 +76,7 @@ describe("search to video integration", () => {
     await user.click(screen.getByRole("button", { name: /search/i }));
 
     expect(mockedSearchVideos).toHaveBeenCalledWith("space");
+    expect(router.state.location.search).toBe("?query=space");
 
     await user.click(
       await screen.findByRole("link", { name: /mocked space launch/i }),
@@ -105,8 +86,11 @@ describe("search to video integration", () => {
       await screen.findByRole("heading", { name: videoDetails.title }),
     ).toBeInTheDocument();
     expect(router.state.location.pathname).toBe("/videos/xmocked");
-    expect(screen.getByTestId("location-state")).toHaveTextContent(
-      JSON.stringify({ returnToSearch: { query: "space" } }),
-    );
+    expect(router.state.location.search).toBe("");
+
+    await user.click(screen.getByRole("link", { name: /back to search/i }));
+
+    expect(router.state.location.pathname).toBe("/");
+    expect(router.state.location.search).toBe("?query=space");
   });
 });

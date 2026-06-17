@@ -33,11 +33,7 @@ describe("useVideoSearch", () => {
     }>();
     mockedSearchVideos.mockReturnValue(deferred.promise);
 
-    const { result } = renderHook(() => useVideoSearch());
-
-    act(() => {
-      result.current.search("  space  ");
-    });
+    const { result } = renderHook(() => useVideoSearch({ query: "  space  " }));
 
     expect(result.current.query).toBe("space");
     expect(result.current.isLoading).toBe(true);
@@ -54,11 +50,7 @@ describe("useVideoSearch", () => {
   });
 
   it("clears state and skips the API call when the search is empty", () => {
-    const { result } = renderHook(() => useVideoSearch());
-
-    act(() => {
-      result.current.search("   ");
-    });
+    const { result } = renderHook(() => useVideoSearch({ query: "   " }));
 
     expect(result.current.query).toBe("");
     expect(result.current.videos).toEqual([]);
@@ -68,6 +60,10 @@ describe("useVideoSearch", () => {
   });
 
   it("stores videos and stops loading after a successful search", async () => {
+    const deferred = createDeferredPromise<{
+      list: VideoSummary[];
+      hasMore: boolean;
+    }>();
     const videos: VideoSummary[] = [
       {
         id: "1",
@@ -76,16 +72,17 @@ describe("useVideoSearch", () => {
         ownerScreenname: "nasa",
       },
     ];
-    mockedSearchVideos.mockResolvedValue({ list: videos, hasMore: false });
+    mockedSearchVideos.mockReturnValue(deferred.promise);
 
-    const { result } = renderHook(() => useVideoSearch());
-
-    act(() => {
-      result.current.search("space");
-    });
+    const { result } = renderHook(() => useVideoSearch({ query: "space" }));
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.error).toBeNull();
+
+    await act(async () => {
+      deferred.resolve({ list: videos, hasMore: false });
+      await deferred.promise;
+    });
 
     await waitFor(() => {
       expect(result.current.videos).toEqual(videos);
@@ -123,11 +120,15 @@ describe("useVideoSearch", () => {
       .mockReturnValueOnce(firstSearch.promise)
       .mockReturnValueOnce(secondSearch.promise);
 
-    const { result } = renderHook(() => useVideoSearch());
+    const { result, rerender } = renderHook(
+      ({ query }) => useVideoSearch({ query }),
+      {
+        initialProps: { query: "first" },
+      },
+    );
 
     act(() => {
-      result.current.search("first");
-      result.current.search("second");
+      rerender({ query: "second" });
     });
 
     expect(result.current.query).toBe("second");
@@ -155,15 +156,20 @@ describe("useVideoSearch", () => {
   });
 
   it("stores an error, clears videos, and stops loading when the search fails", async () => {
-    mockedSearchVideos.mockRejectedValue(new Error("Network failure"));
+    const deferred = createDeferredPromise<{
+      list: VideoSummary[];
+      hasMore: boolean;
+    }>();
+    mockedSearchVideos.mockReturnValue(deferred.promise);
 
-    const { result } = renderHook(() => useVideoSearch());
-
-    act(() => {
-      result.current.search("space");
-    });
+    const { result } = renderHook(() => useVideoSearch({ query: "space" }));
 
     expect(result.current.isLoading).toBe(true);
+
+    await act(async () => {
+      deferred.reject(new Error("Network failure"));
+      await expect(deferred.promise).rejects.toThrow("Network failure");
+    });
 
     await waitFor(() => {
       expect(result.current.error).toBe(

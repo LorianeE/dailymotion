@@ -1,11 +1,45 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
 import { SearchBar } from "../../components/SearchBar/SearchBar";
 import { VideoGrid } from "../../components/VideoGrid/VideoGrid";
 import { SearchSuggestions } from "./SearchSuggestions";
 import { useVideoSearch } from "./useVideoSearch";
 
 export function SearchPage() {
-  const { query, videos, isLoading, error, search } = useVideoSearch();
-  const hasActiveSearch = query.length > 0;
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const queryFromUrl = searchParams.get("query")?.trim() ?? "";
+  const [draftQuery, setDraftQuery] = useState(queryFromUrl);
+  const {
+    query: submittedQuery,
+    videos,
+    isLoading,
+    error,
+  } = useVideoSearch({ query: queryFromUrl });
+  const hasActiveSearch = submittedQuery.length > 0;
+
+  // To synchronize value from query to value in searchbar
+  useEffect(() => {
+    setDraftQuery(queryFromUrl);
+  }, [queryFromUrl]);
+
+  function updateSearchUrl(nextQuery: string) {
+    if (!nextQuery) {
+      void navigate("/");
+      return;
+    }
+
+    const params = new URLSearchParams({ query: nextQuery });
+    void navigate(`/?${params}`);
+  }
+
+  function handleSearch(value: string) {
+    const nextQuery = value.trim();
+
+    setDraftQuery(nextQuery);
+    updateSearchUrl(nextQuery);
+  }
 
   return (
     <div>
@@ -21,20 +55,25 @@ export function SearchPage() {
           chasing you around — just a search box and a player.
         </p>
 
-        <SearchBar onSearch={search} query={query} />
-        <SearchSuggestions onSelect={search} />
+        <SearchBar
+          onSearch={handleSearch}
+          onValueChange={setDraftQuery}
+          value={draftQuery}
+        />
+        <SearchSuggestions onSelect={handleSearch} />
       </section>
 
       {hasActiveSearch ? (
         <section className="mt-16 space-y-6">
           <h2 className="font-display text-3xl text-foreground">
-            Results for <em className="text-primary">&quot;{query}&quot;</em>
+            Results for{" "}
+            <em className="text-primary">&quot;{submittedQuery}&quot;</em>
           </h2>
           <VideoGrid
             emptyDescription="Nothing in the local catalog matched that query. Try another mood, topic, or channel."
             error={error}
             isLoading={isLoading}
-            searchQuery={query}
+            searchQuery={submittedQuery}
             videos={videos}
           />
         </section>
