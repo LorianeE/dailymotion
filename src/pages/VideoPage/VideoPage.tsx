@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "../../components/ui/button";
 import { BackToSearchLink } from "./components/BackToSearchLink";
@@ -16,6 +16,10 @@ export function VideoPage() {
     useVideoDetails();
   const displayedLikes =
     video?.likes === undefined ? undefined : video.likes + (liked ? 1 : 0);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, []);
 
   if (error) {
     return (

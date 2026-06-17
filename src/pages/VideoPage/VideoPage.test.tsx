@@ -45,8 +45,25 @@ function renderVideoPage() {
 }
 
 describe("VideoPage like button", () => {
+  beforeEach(() => {
+    vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
+    vi.restoreAllMocks();
+  });
+
+  it("scrolls to the top when the page is displayed", () => {
+    mockVideoDetails();
+
+    renderVideoPage();
+
+    expect(window.scrollTo).toHaveBeenCalledWith({
+      top: 0,
+      left: 0,
+      behavior: "auto",
+    });
   });
 
   it("toggles between Like and Liked and updates the likes total", async () => {
