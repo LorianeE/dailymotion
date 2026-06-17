@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { searchVideos } from "../../api/dailymotion";
 import type { VideoSummary } from "../../types/video";
@@ -16,16 +16,23 @@ export function useVideoSearch(): UseVideoSearchResult {
   const [videos, setVideos] = useState<VideoSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const latestSearchId = useRef(0);
 
-  async function runSearch(nextQuery: string) {
+  async function runSearch(nextQuery: string, searchId: number) {
     try {
       const response = await searchVideos(nextQuery);
-      setVideos(response.list);
+      if (searchId === latestSearchId.current) {
+        setVideos(response.list);
+      }
     } catch {
-      setError("Could not load videos. Try another search.");
-      setVideos([]);
+      if (searchId === latestSearchId.current) {
+        setError("Could not load videos. Try another search.");
+        setVideos([]);
+      }
     } finally {
-      setIsLoading(false);
+      if (searchId === latestSearchId.current) {
+        setIsLoading(false);
+      }
     }
   }
 
@@ -35,6 +42,7 @@ export function useVideoSearch(): UseVideoSearchResult {
     setQuery(nextQuery);
 
     if (!nextQuery) {
+      latestSearchId.current += 1;
       setVideos([]);
       setError(null);
       setIsLoading(false);
@@ -43,9 +51,9 @@ export function useVideoSearch(): UseVideoSearchResult {
 
     setIsLoading(true);
     setError(null);
-    // TODO: if users can submit multiple searches in quick succession, an older
-    // response may arrive after a newer one and overwrite the latest results.
-    void runSearch(nextQuery);
+    const searchId = latestSearchId.current + 1;
+    latestSearchId.current = searchId;
+    void runSearch(nextQuery, searchId);
   }
 
   return {

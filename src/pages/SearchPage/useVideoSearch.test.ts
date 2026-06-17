@@ -94,6 +94,66 @@ describe("useVideoSearch", () => {
     });
   });
 
+  it("keeps the latest results when searches resolve out of order", async () => {
+    const firstSearch = createDeferredPromise<{
+      list: VideoSummary[];
+      hasMore: boolean;
+    }>();
+    const secondSearch = createDeferredPromise<{
+      list: VideoSummary[];
+      hasMore: boolean;
+    }>();
+    const oldVideos: VideoSummary[] = [
+      {
+        id: "old",
+        title: "Old result",
+        thumbnailUrl: "/old.jpg",
+        ownerScreenname: "old-channel",
+      },
+    ];
+    const latestVideos: VideoSummary[] = [
+      {
+        id: "latest",
+        title: "Latest result",
+        thumbnailUrl: "/latest.jpg",
+        ownerScreenname: "latest-channel",
+      },
+    ];
+    mockedSearchVideos
+      .mockReturnValueOnce(firstSearch.promise)
+      .mockReturnValueOnce(secondSearch.promise);
+
+    const { result } = renderHook(() => useVideoSearch());
+
+    act(() => {
+      result.current.search("first");
+      result.current.search("second");
+    });
+
+    expect(result.current.query).toBe("second");
+    expect(mockedSearchVideos).toHaveBeenNthCalledWith(1, "first");
+    expect(mockedSearchVideos).toHaveBeenNthCalledWith(2, "second");
+
+    await act(async () => {
+      secondSearch.resolve({ list: latestVideos, hasMore: false });
+      await secondSearch.promise;
+    });
+
+    await waitFor(() => {
+      expect(result.current.videos).toEqual(latestVideos);
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    await act(async () => {
+      firstSearch.resolve({ list: oldVideos, hasMore: false });
+      await firstSearch.promise;
+    });
+
+    expect(result.current.videos).toEqual(latestVideos);
+    expect(result.current.error).toBeNull();
+    expect(result.current.isLoading).toBe(false);
+  });
+
   it("stores an error, clears videos, and stops loading when the search fails", async () => {
     mockedSearchVideos.mockRejectedValue(new Error("Network failure"));
 
