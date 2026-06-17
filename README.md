@@ -40,9 +40,12 @@ The codebase uses a page-oriented structure:
 
 ```txt
 src/
+  main.tsx
+  index.css
   app/
     App.tsx
     router.tsx
+    SearchToVideo.integration.test.tsx
   pages/
     SearchPage/
       SearchPage.tsx
@@ -57,11 +60,14 @@ src/
       components/
         BackToSearchLink.tsx
         CreatorBlock.tsx
+        DescriptionBlock.test.tsx
         DescriptionBlock.tsx
+        descriptionFormat.ts
         Tags.tsx
         VideoDetailsAside.tsx
         VideoPlayer.tsx
         VideoTitleSkeleton.tsx
+      useVideoDetails.test.tsx
   components/
     Header/
     Layout/
@@ -74,11 +80,14 @@ src/
       input.tsx
   api/
     dailymotion/
-      index.ts
-      searchVideos.ts
-      getVideoDetails.ts
       config.ts
+      getVideoDetails.test.ts
+      getVideoDetails.ts
+      index.ts
+      mapper.test.ts
       mapper.ts
+      searchVideos.test.ts
+      searchVideos.ts
       types.ts
     mock/
       dailymotion.ts
@@ -117,13 +126,13 @@ This keeps the initial codebase easy to scan while still leaving room to grow. I
 
 - `lucide-react` was chosen instead of `react-icons` because the app only needs a small, consistent icon set and Lucide keeps the visual language lighter and easier to control.
 - The project does not install `shadcn/ui`, but the shared primitives are intentionally built in a shadcn-like style so the app can be connected to the real library later without reshaping the component API.
-- A Dailymotion SDK integration would have been the better long-term choice, as recommended by the documentation, especially to listen to player messages and react to playback events properly.
+- A Dailymotion Web SDK integration would have been the better long-term choice, especially to listen to player events and react to playback state properly.
 - Search context is passed through React Router state instead of a global store because the app only needs to preserve the previous query across the search-to-video flow.
 - The search page uses small `setState` calls inside `useEffect` to keep the input and search results synchronized with the URL query; this is a pragmatic tradeoff for the exercise, and with more time I would explore a cleaner router/data-loading model.
 - No global state library was added because the application state is limited to search results, loading and error states, and one local like toggle.
-- The API layer exposes simple errors for failed searches and missing videos, while advanced retry, cache invalidation, or offline behavior was left out to keep the implementation aligned with the assignment scope.
+- The API layer exposes simple errors for failed searches and missing videos. The video details page has a basic manual retry action, while broader retry policies, cache invalidation, or offline behavior were left out to keep the implementation aligned with the assignment scope.
 - Responsive polish was not handled in depth because it was outside the assignment scope, the player is embedded through an iframe, and this kind of video experience would usually deserve a dedicated mobile app rather than relying on a mobile browser.
-- Continuous autoplay was disabled because it would require listening to events emitted by the player, and the documentation points to using a player integration for that instead of managing it through a plain iframe. For the exercise, and because of the available time, the iframe uses `loop=true` instead.
+- Continuous autoplay was disabled because it would require listening to player events. Dailymotion's [event documentation](https://developers.dailymotion.com/docs/listen-to-player-events-web) points to the Web SDK player scripts for that rather than plain iframe embeds. For the exercise, and because of the available time, the iframe uses `loop=true` instead.
 
 ## Testing strategy
 
@@ -134,6 +143,9 @@ The current testing approach focuses on:
 - Page rendering and routing behavior
 - User interactions such as suggestion selection and like toggling
 - Search hook behavior such as trimming input, loading state, success, and failure flows
+- Video details hook behavior such as loading, retry, missing-video, and error flows
+- API request construction and response mapping
+- Description formatting behavior
 - API layer mocking in unit and integration-style UI tests
 
 Only shared test bootstrap lives outside colocated tests, in `src/test/setup.ts`.
@@ -142,7 +154,7 @@ Only shared test bootstrap lives outside colocated tests, in `src/test/setup.ts`
 
 - Likes are local-only and are not persisted because the public API write flow is outside the assignment scope.
 - Search results are limited to the first API page; infinite scrolling or manual pagination would be the next step for larger result sets.
-- Error handling is intentionally simple and does not include retries, request cancellation, or offline support.
+- Error handling is intentionally simple and does not include broad retry policies, request cancellation, or offline support. Search ignores stale responses from older requests, but it does not cancel the underlying network call.
 - The embedded player is iframe-based, so playback events are not consumed by the app.
 - Responsive behavior exists at a basic layout level, but mobile-specific polish was not treated as a core requirement for this exercise.
 
