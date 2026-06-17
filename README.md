@@ -17,11 +17,22 @@ The application currently provides:
 - Vite
 - React Router
 - Tailwind CSS v4
+- `lucide-react`
 - Vitest
 - React Testing Library
 - `@testing-library/user-event`
 - ESLint
 - Prettier
+
+## Run instructions
+
+```bash
+npm install
+npm run dev
+npm run test:run
+npm run lint
+npm run build
+```
 
 ## Architecture
 
@@ -102,6 +113,17 @@ For this exercise I deliberately chose a simple page-oriented structure rather t
 
 This keeps the initial codebase easy to scan while still leaving room to grow. It also matches the scope of the assignment: two pages, one API surface, and a limited amount of state.
 
+## Tradeoffs and decisions
+
+- `lucide-react` was chosen instead of `react-icons` because the app only needs a small, consistent icon set and Lucide keeps the visual language lighter and easier to control.
+- The project does not install `shadcn/ui`, but the shared primitives are intentionally built in a shadcn-like style so the app can be connected to the real library later without reshaping the component API.
+- A Dailymotion SDK integration would have been the better long-term choice, as recommended by the documentation, especially to listen to player messages and react to playback events properly.
+- Search context is passed through React Router state instead of a global store because the app only needs to preserve the previous query across the search-to-video flow.
+- No global state library was added because the application state is limited to search results, loading and error states, and one local like toggle.
+- The API layer exposes simple errors for failed searches and missing videos, while advanced retry, cache invalidation, or offline behavior was left out to keep the implementation aligned with the assignment scope.
+- Responsive polish was not handled in depth because it was outside the assignment scope, the player is embedded through an iframe, and this kind of video experience would usually deserve a dedicated mobile app rather than relying on a mobile browser.
+- Continuous autoplay was disabled because it would require listening to events emitted by the player, and the documentation points to using a player integration for that instead of managing it through a plain iframe. For the exercise, and because of the available time, the iframe uses `loop=true` instead.
+
 ## Testing strategy
 
 Tests are colocated with the page or hook they cover. This keeps behavior and verification close together and avoids a disconnected global test tree.
@@ -115,11 +137,20 @@ The current testing approach focuses on:
 
 Only shared test bootstrap lives outside colocated tests, in `src/test/setup.ts`.
 
+## Known limitations
+
+- Likes are local-only and are not persisted because the public API write flow is outside the assignment scope.
+- Search results are limited to the first API page; infinite scrolling or manual pagination would be the next step for larger result sets.
+- Error handling is intentionally simple and does not include retries, request cancellation, or offline support.
+- The embedded player is iframe-based, so playback events are not consumed by the app.
+- Responsive behavior exists at a basic layout level, but mobile-specific polish was not treated as a core requirement for this exercise.
+
 ## Future improvements
 
 - Infinite scrolling pagination
 - Better loading states
 - API caching strategy
+- Storybook could be useful for documenting and reviewing reusable UI components such as `VideoCard`, `SearchBar`, `LikeButton`, and shared layout elements in isolation. It was intentionally left out of this exercise to keep the scope focused on the application behavior, tests, and core implementation within the available time.
 - Accessibility improvements
 - Error boundary handling for route failures
 - Responsive polish for denser result layouts
