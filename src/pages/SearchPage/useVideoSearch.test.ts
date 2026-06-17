@@ -179,4 +179,20 @@ describe("useVideoSearch", () => {
       expect(result.current.isLoading).toBe(false);
     });
   });
+
+  it("handles an invalid searchVideos mock without throwing in the effect", async () => {
+    mockedSearchVideos.mockReturnValue(
+      undefined as unknown as ReturnType<typeof searchVideos>,
+    );
+
+    const { result } = renderHook(() => useVideoSearch({ query: "space" }));
+
+    await waitFor(() => {
+      expect(result.current.error).toBe(
+        "Could not load videos. Try another search.",
+      );
+      expect(result.current.videos).toEqual([]);
+      expect(result.current.isLoading).toBe(false);
+    });
+  });
 });

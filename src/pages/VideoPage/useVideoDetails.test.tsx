@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
@@ -106,7 +106,9 @@ describe("useVideoDetails", () => {
       );
     });
 
-    result.current.retry();
+    act(() => {
+      result.current.retry();
+    });
 
     await waitFor(() => {
       expect(result.current.video).toEqual(video);

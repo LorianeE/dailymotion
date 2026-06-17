@@ -37,23 +37,24 @@ export function useVideoSearch({
     setIsLoading(true);
     setError(null);
 
-    void searchVideos(query)
-      .then((response) => {
+    void (async () => {
+      try {
+        const response = await searchVideos(query);
+
         if (searchId === latestSearchId.current) {
           setVideos(response.list);
         }
-      })
-      .catch(() => {
+      } catch {
         if (searchId === latestSearchId.current) {
           setError("Could not load videos. Try another search.");
           setVideos([]);
         }
-      })
-      .finally(() => {
+      } finally {
         if (searchId === latestSearchId.current) {
           setIsLoading(false);
         }
-      });
+      }
+    })();
   }, [query]);
 
   return {
