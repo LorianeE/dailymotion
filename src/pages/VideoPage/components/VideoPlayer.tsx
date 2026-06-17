@@ -12,7 +12,7 @@ export function VideoPlayer({ isLoading, title, videoId }: VideoPlayerProps) {
           <div className="h-full w-full animate-pulse bg-muted" />
         ) : (
           <iframe
-            allow="autoplay; fullscreen; picture-in-picture; web-share"
+            allow="fullscreen; web-share"
             allowFullScreen
             className="h-full w-full"
             src={`https://geo.dailymotion.com/player.html?video=${videoId}&loop=true`}
