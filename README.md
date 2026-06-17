@@ -40,7 +40,13 @@ src/
     LikeButton/
     Layout/
   api/
-    dailymotion.ts
+    dailymotion/
+      index.ts
+      searchVideos.ts
+      getVideoDetails.ts
+      config.ts
+      mapper.ts
+      types.ts
   types/
     video.ts
   test/
@@ -55,7 +61,7 @@ Each page owns its local logic through colocated hooks and tests:
 - `SearchPage/useVideoSearch.ts`
 - `SearchPage/SearchPage.test.tsx`
 
-Shared UI stays in `src/components/`, while API access is intentionally centralized in `src/api/dailymotion.ts`.
+Shared UI stays in `src/components/`, while API access is exposed through the `src/api/dailymotion` module.
 
 Page-specific UI components should stay colocated with the page that owns them, under a local `components/` folder such as `src/pages/VideoPage/components/`. This keeps the top-level page file focused on data flow, state, and layout composition, while avoiding the promotion of one-off UI blocks into the shared `src/components/` namespace before they have a real second consumer.
 

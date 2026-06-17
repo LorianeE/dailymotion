@@ -1,5 +1,5 @@
-import type { VideoDetails, VideoSummary } from "../types/video";
-import type { DailymotionVideo } from "./dailymotion.types";
+import type { VideoDetails, VideoSummary } from "../../types/video";
+import type { DailymotionVideo } from "./types";
 
 export function mapVideos(videos: DailymotionVideo[]): VideoSummary[] {
   return videos.map(mapVideo);
