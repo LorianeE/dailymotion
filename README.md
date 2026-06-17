@@ -119,6 +119,7 @@ This keeps the initial codebase easy to scan while still leaving room to grow. I
 - The project does not install `shadcn/ui`, but the shared primitives are intentionally built in a shadcn-like style so the app can be connected to the real library later without reshaping the component API.
 - A Dailymotion SDK integration would have been the better long-term choice, as recommended by the documentation, especially to listen to player messages and react to playback events properly.
 - Search context is passed through React Router state instead of a global store because the app only needs to preserve the previous query across the search-to-video flow.
+- The search page uses small `setState` calls inside `useEffect` to keep the input and search results synchronized with the URL query; this is a pragmatic tradeoff for the exercise, and with more time I would explore a cleaner router/data-loading model.
 - No global state library was added because the application state is limited to search results, loading and error states, and one local like toggle.
 - The API layer exposes simple errors for failed searches and missing videos, while advanced retry, cache invalidation, or offline behavior was left out to keep the implementation aligned with the assignment scope.
 - Responsive polish was not handled in depth because it was outside the assignment scope, the player is embedded through an iframe, and this kind of video experience would usually deserve a dedicated mobile app rather than relying on a mobile browser.
