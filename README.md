@@ -57,6 +57,8 @@ Each page owns its local logic through colocated hooks and tests:
 
 Shared UI stays in `src/components/`, while API access is intentionally centralized in `src/api/dailymotion.ts`.
 
+Page-specific UI components should stay colocated with the page that owns them, under a local `components/` folder such as `src/pages/VideoPage/components/`. This keeps the top-level page file focused on data flow, state, and layout composition, while avoiding the promotion of one-off UI blocks into the shared `src/components/` namespace before they have a real second consumer.
+
 ## Why page-oriented architecture
 
 For this exercise I deliberately chose a simple page-oriented structure rather than a feature-based architecture. With only two pages and a single domain (videos), a feature folder would add unnecessary nesting. For a larger application with multiple business domains, I would likely move toward a feature-oriented structure.

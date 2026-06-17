@@ -1,3 +1,8 @@
+import { Heart } from "lucide-react";
+
+import { cn } from "../../lib/utils";
+import { Button } from "../ui/button";
+
 type LikeButtonProps = {
   isLiked?: boolean;
   onToggle?: () => void;
@@ -8,12 +13,16 @@ export function LikeButton({
   onToggle,
 }: LikeButtonProps) {
   return (
-    <button
-      className="rounded-full border border-border bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/85"
+    <Button
+      aria-pressed={isLiked}
+      className="gap-2"
       onClick={onToggle}
+      size="sm"
       type="button"
+      variant={isLiked ? "default" : "outline"}
     >
-      LikeButton placeholder: {isLiked ? "liked" : "not liked"}
-    </button>
+      <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
+      {isLiked ? "Liked" : "Like"}
+    </Button>
   );
 }
