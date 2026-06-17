@@ -1,21 +1,31 @@
+import { useState } from "react";
 import {
   ArrowLeft,
   Calendar,
   Clock3,
   Eye,
+  Heart,
   ThumbsUp,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Button } from "../../components/ui/button";
-import { formatDate, formatDuration, formatViews } from "../../utils/videoFormat";
+import { cn } from "../../lib/utils";
+import {
+  formatDate,
+  formatDuration,
+  formatViews,
+} from "../../utils/videoFormat";
 import { useVideoDetails } from "./useVideoDetails";
 
 const EMPTY_VALUE = "—";
 
 export function VideoPage() {
+  const [liked, setLiked] = useState<boolean>(false);
   const { videoId, video, isLoading, error, notFound, retry } =
     useVideoDetails();
+  const displayedLikes =
+    video?.likes === undefined ? undefined : video.likes + (liked ? 1 : 0);
 
   if (error) {
     return (
@@ -84,7 +94,9 @@ export function VideoPage() {
             <CreatorBlock
               avatarUrl={video?.ownerAvatarUrl}
               isLoading={isLoading}
+              liked={liked}
               name={video?.ownerScreenname}
+              onToggleLiked={() => setLiked((v) => !v)}
             />
           </section>
 
@@ -110,7 +122,7 @@ export function VideoPage() {
             icon={<LikesIcon />}
             isLoading={isLoading}
             label="Likes"
-            value={formatCompactNumber(video?.likes)}
+            value={formatCompactNumber(displayedLikes)}
           />
           <StatCard
             icon={<DurationIcon />}
@@ -145,36 +157,56 @@ function BackToSearchLink() {
 function CreatorBlock({
   avatarUrl,
   isLoading,
+  liked,
   name,
+  onToggleLiked,
 }: {
   avatarUrl?: string;
   isLoading: boolean;
+  liked: boolean;
   name?: string;
+  onToggleLiked: () => void;
 }) {
   return (
-    <div className="flex items-center gap-3 border-b border-border pb-5">
-      {isLoading ? (
-        <div className="h-10 w-10 shrink-0 animate-pulse rounded-full bg-muted" />
-      ) : avatarUrl ? (
-        <img
-          alt=""
-          className="h-10 w-10 rounded-full object-cover ring-1 ring-border"
-          src={avatarUrl}
-        />
-      ) : (
-        <div className="h-10 w-10 rounded-full bg-accent ring-1 ring-border" />
-      )}
-
-      <div className="min-w-0">
+    <div className="flex items-center justify-between gap-3 border-b border-border pb-5">
+      <div className="flex items-center gap-3">
         {isLoading ? (
-          <div className="h-4 w-36 animate-pulse rounded-full bg-muted" />
+          <div className="h-10 w-10 shrink-0 animate-pulse rounded-full bg-muted" />
+        ) : avatarUrl ? (
+          <img
+            alt=""
+            className="h-10 w-10 rounded-full object-cover ring-1 ring-border"
+            src={avatarUrl}
+          />
         ) : (
-          <p className="truncate text-sm font-medium text-foreground">
-            {name ?? "Dailymotion creator"}
-          </p>
+          <div className="h-10 w-10 rounded-full bg-accent ring-1 ring-border" />
         )}
-        <p className="mt-1 text-xs text-muted-foreground">Creator</p>
+
+        <div className="min-w-0">
+          {isLoading ? (
+            <div className="h-4 w-36 animate-pulse rounded-full bg-muted" />
+          ) : (
+            <p className="truncate text-sm font-medium text-foreground">
+              {name ?? "Dailymotion creator"}
+            </p>
+          )}
+          <p className="mt-1 text-xs text-muted-foreground">Creator</p>
+        </div>
       </div>
+
+      {!isLoading ? (
+        <Button
+          aria-pressed={liked}
+          className="gap-2"
+          onClick={onToggleLiked}
+          size="sm"
+          type="button"
+          variant={liked ? "default" : "outline"}
+        >
+          <Heart className={cn("h-4 w-4", liked && "fill-current")} />
+          {liked ? "Liked" : "Like"}
+        </Button>
+      ) : null}
     </div>
   );
 }
