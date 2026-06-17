@@ -4,11 +4,11 @@
 
 This project is a technical assignment for a small video browsing application powered by the Dailymotion public API.
 
-The application will provide:
+The application currently provides:
 
 - A search page to find videos
 - A video details page with an embedded player
-- Local like / unlike persistence using `localStorage`
+- A like / unlike interaction on the video details page, stored in local component state
 
 ## Chosen stack
 
@@ -30,15 +30,37 @@ The codebase uses a page-oriented structure:
 ```txt
 src/
   app/
+    App.tsx
+    router.tsx
   pages/
     SearchPage/
+      SearchPage.tsx
+      SearchPage.test.tsx
+      SearchSuggestions.tsx
+      useVideoSearch.ts
+      useVideoSearch.test.ts
     VideoPage/
+      VideoPage.tsx
+      VideoPage.test.tsx
+      useVideoDetails.ts
+      components/
+        BackToSearchLink.tsx
+        CreatorBlock.tsx
+        DescriptionBlock.tsx
+        Tags.tsx
+        VideoDetailsAside.tsx
+        VideoPlayer.tsx
+        VideoTitleSkeleton.tsx
   components/
+    Header/
+    Layout/
+    LikeButton/
     SearchBar/
     VideoCard/
     VideoGrid/
-    LikeButton/
-    Layout/
+    ui/
+      button.tsx
+      input.tsx
   api/
     dailymotion/
       index.ts
@@ -47,21 +69,30 @@ src/
       config.ts
       mapper.ts
       types.ts
+    mock/
+      dailymotion.ts
+  lib/
+    utils.ts
   types/
     video.ts
+  utils/
+    videoFormat.ts
   test/
     setup.ts
 ```
 
-Routing and app bootstrap stay in `src/app/`.
+Routing and app bootstrap stay in `src/app/`, with routes for `/` and `/videos/:videoId`.
 
-Each page owns its local logic through colocated hooks and tests:
+Each page owns its local logic through colocated hooks, tests, and page-specific UI where that pattern is already useful:
 
 - `SearchPage/SearchPage.tsx`
 - `SearchPage/useVideoSearch.ts`
 - `SearchPage/SearchPage.test.tsx`
+- `VideoPage/VideoPage.tsx`
+- `VideoPage/useVideoDetails.ts`
+- `VideoPage/components/*`
 
-Shared UI stays in `src/components/`, while API access is exposed through the `src/api/dailymotion` module.
+Shared UI stays in `src/components/`, while API access is exposed through the `src/api/dailymotion` module. The repository also contains a small mock catalog under `src/api/mock/` that can be used independently from the live API layer.
 
 Page-specific UI components should stay colocated with the page that owns them, under a local `components/` folder such as `src/pages/VideoPage/components/`. This keeps the top-level page file focused on data flow, state, and layout composition, while avoiding the promotion of one-off UI blocks into the shared `src/components/` namespace before they have a real second consumer.
 
@@ -73,14 +104,13 @@ This keeps the initial codebase easy to scan while still leaving room to grow. I
 
 ## Testing strategy
 
-Tests are colocated with the page or component they cover. This keeps behavior and verification close together and avoids a disconnected global test tree.
+Tests are colocated with the page or hook they cover. This keeps behavior and verification close together and avoids a disconnected global test tree.
 
-The testing approach will focus on:
+The current testing approach focuses on:
 
 - Page rendering and routing behavior
-- User interactions such as typing, navigation, and like toggling
-- URL query parameter synchronization for search
-- Local persistence behavior for liked videos
+- User interactions such as suggestion selection and like toggling
+- Search hook behavior such as trimming input, loading state, success, and failure flows
 - API layer mocking in unit and integration-style UI tests
 
 Only shared test bootstrap lives outside colocated tests, in `src/test/setup.ts`.
